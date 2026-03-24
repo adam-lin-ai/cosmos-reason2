@@ -1,160 +1,269 @@
 {
-  "overall_mean_3d_iou": 0.0025,
+  "overall_mean_3d_iou": 0.0435,
   "total_gt": 1200,
-  "total_pred": 16,
-  "total_matched": 16,
+  "total_pred": 178,
+  "total_matched": 178,
   "per_timestamp": [
     {
       "timestamp_micros": 0,
       "num_pred": 4,
       "num_gt": 40,
       "matched_ious": [
-        0.0016,
-        0.0003,
+        0.3392,
+        0.3602,
         0.0,
         0.0
       ],
-      "mean_iou": 0.0005
+      "mean_iou": 0.1749
     },
     {
       "timestamp_micros": 100000,
-      "num_pred": 7,
+      "num_pred": 5,
       "num_gt": 40,
       "matched_ious": [
-        0.0,
-        0.0107,
-        0.004,
+        0.0202,
         0.0,
         0.0,
         0.0,
-        0.0021
+        0.0
       ],
-      "mean_iou": 0.0024
+      "mean_iou": 0.004
     },
     {
       "timestamp_micros": 200000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1619,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0405
+    },
+    {
+      "timestamp_micros": 300000,
+      "num_pred": 9,
+      "num_gt": 40,
+      "matched_ious": [
+        0.4098,
+        0.0,
+        0.0,
+        0.0,
+        0.0015,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0457
+    },
+    {
+      "timestamp_micros": 400000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.04,
+        0.0341,
+        0.0,
+        0.1193,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0276
+    },
+    {
+      "timestamp_micros": 500000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.4201,
+        0.2746,
+        0.0015,
+        0.0
+      ],
+      "mean_iou": 0.1741
+    },
+    {
+      "timestamp_micros": 600000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0097,
+        0.0,
+        0.0019,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0016
+    },
+    {
+      "timestamp_micros": 700000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.3011,
+        0.0,
+        0.2042,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0842
+    },
+    {
+      "timestamp_micros": 800000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0142,
+        0.3163,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0472
+    },
+    {
+      "timestamp_micros": 900000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0307,
+        0.1424,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0433
+    },
+    {
+      "timestamp_micros": 1000000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.3137,
+        0.0,
+        0.0029,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0528
+    },
+    {
+      "timestamp_micros": 1100000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1543,
+        0.0066,
+        0.0771
+      ],
+      "mean_iou": 0.0595
+    },
+    {
+      "timestamp_micros": 1200000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1267,
+        0.0661,
+        0.0688
+      ],
+      "mean_iou": 0.0654
+    },
+    {
+      "timestamp_micros": 1300000,
+      "num_pred": 8,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0002,
+        0.0,
+        0.2037,
+        0.0,
+        0.0,
+        0.0,
+        0.0049,
+        0.0
+      ],
+      "mean_iou": 0.0261
+    },
+    {
+      "timestamp_micros": 1400000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1254,
+        0.02,
+        0.0864
+      ],
+      "mean_iou": 0.058
+    },
+    {
+      "timestamp_micros": 1500000,
       "num_pred": 5,
       "num_gt": 40,
       "matched_ious": [
         0.0,
-        0.0059,
-        0.0154,
+        0.0572,
+        0.0001,
         0.0,
-        0.0
+        0.2005
       ],
-      "mean_iou": 0.0043
-    },
-    {
-      "timestamp_micros": 300000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 400000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 500000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 600000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 700000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 800000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 900000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 1000000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 1100000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 1200000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 1300000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 1400000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
-    },
-    {
-      "timestamp_micros": 1500000,
-      "num_pred": 0,
-      "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "mean_iou": 0.0516
     },
     {
       "timestamp_micros": 1600000,
-      "num_pred": 0,
+      "num_pred": 5,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.164,
+        0.0,
+        0.0,
+        0.0531
+      ],
+      "mean_iou": 0.0434
     },
     {
       "timestamp_micros": 1700000,
-      "num_pred": 0,
+      "num_pred": 10,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.1271,
+        0.0046,
+        0.0579,
+        0.0,
+        0.0,
+        0.0,
+        0.0005,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.019
     },
     {
       "timestamp_micros": 1800000,
-      "num_pred": 0,
+      "num_pred": 6,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.1415,
+        0.0,
+        0.0445,
+        0.0,
+        0.1325
+      ],
+      "mean_iou": 0.0531
     },
     {
       "timestamp_micros": 1900000,
@@ -165,66 +274,144 @@
     },
     {
       "timestamp_micros": 2000000,
-      "num_pred": 0,
+      "num_pred": 6,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.2376,
+        0.0,
+        0.1701,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.068
     },
     {
       "timestamp_micros": 2100000,
-      "num_pred": 0,
+      "num_pred": 9,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.0141,
+        0.0,
+        0.0,
+        0.0,
+        0.1449,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0177
     },
     {
       "timestamp_micros": 2200000,
-      "num_pred": 0,
+      "num_pred": 18,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.001,
+        0.0934,
+        0.0023,
+        0.0,
+        0.0,
+        0.1334,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3768,
+        0.0
+      ],
+      "mean_iou": 0.0337
     },
     {
       "timestamp_micros": 2300000,
-      "num_pred": 0,
+      "num_pred": 7,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.131,
+        0.0096,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0201
     },
     {
       "timestamp_micros": 2400000,
-      "num_pred": 0,
+      "num_pred": 4,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.046,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0115
     },
     {
       "timestamp_micros": 2500000,
-      "num_pred": 0,
+      "num_pred": 7,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.1464,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0209
     },
     {
       "timestamp_micros": 2600000,
-      "num_pred": 0,
+      "num_pred": 6,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0677,
+        0.0797,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0246
     },
     {
       "timestamp_micros": 2700000,
-      "num_pred": 0,
+      "num_pred": 7,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.0,
+        0.1638,
+        0.0383,
+        0.0,
+        0.0906
+      ],
+      "mean_iou": 0.0418
     },
     {
       "timestamp_micros": 2800000,
-      "num_pred": 0,
+      "num_pred": 5,
       "num_gt": 40,
-      "matched_ious": [],
-      "mean_iou": 0.0
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.1601,
+        0.19,
+        0.0
+      ],
+      "mean_iou": 0.07
     },
     {
       "timestamp_micros": 2900000,
