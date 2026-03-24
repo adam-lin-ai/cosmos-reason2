@@ -337,8 +337,15 @@ def detections_to_gt_format(
 
             det_rot = Rotation.from_quat([qx, qy, qz, qw])
             if cam_ext is not None:
-                s2r_rot = Rotation.from_matrix(cam_ext["R_s2r"])
-                world_rot = ego_pose["R"] * s2r_rot * det_rot
+                # For orientations use only the camera mounting rotation (RPY),
+                # not the full sensor-to-rig transform.  R_s2r includes
+                # R_CAM2FLU which converts position axes (camera→FLU) but is
+                # already implicit in the model's quaternion convention where
+                # identity means "vehicle forward = camera-z".
+                rpy_rot = Rotation.from_euler(
+                    "xyz", cam_ext["rpy"], degrees=True,
+                )
+                world_rot = ego_pose["R"] * rpy_rot * det_rot
             else:
                 world_rot = ego_pose["R"] * det_rot
             wq = world_rot.as_quat()  # scipy convention: [x, y, z, w]
