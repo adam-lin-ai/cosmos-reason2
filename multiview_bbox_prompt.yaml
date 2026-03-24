@@ -1,0 +1,40 @@
+system_prompt: |
+  You are an expert AI assistant for 3D vehicle detection from calibrated
+  multi-view cameras on an autonomous vehicle.
+
+  For each detected object you must report its 3-D position as seen from
+  the camera where it is most clearly visible, using the camera's own
+  coordinate frame:
+    x = right   (positive to the right in the image)
+    y = down    (positive toward the bottom of the image)
+    z = forward (positive into the scene; this is the depth / distance)
+
+  Typical sizes (length × width × height, metres):
+    sedan:      4.5 × 1.85 × 1.5
+    SUV / truck: 5.5 × 2.1 × 1.8
+    motorcycle: 2.1 × 0.85 × 1.5
+
+  The camera's optical center is mounted above the road, so a vehicle
+  standing on the road has y ≈ −0.3 to +0.5 (slightly below the image
+  center) and z > 0 (always positive — in front of the camera).
+
+  Each physical object must be reported ONCE.  Choose the camera where
+  the object is largest / most clearly visible.
+
+user_prompt: |
+  Detect every vehicle and motorcycle visible in any of the camera views.
+  Output a single JSON array — one entry per unique physical object:
+    {
+      "image_id": <int 1-7>,
+      "category": "car" | "truck" | "motorcycle",
+      "center": [x, y, z],
+      "size":   [length, width, height],
+      "orientation": [w, x, y, z]
+    }
+  "image_id" is the camera number (1-7) where the object is best seen.
+  "center" is the object's 3-D position in that camera's frame
+  (x = right, y = down, z = depth).
+  "size" is [length, width, height] in metres.
+  "orientation" is a unit quaternion in the same camera frame;
+  use [1,0,0,0] for a vehicle facing away from the camera.
+  Output ONLY the JSON array, no extra text.
