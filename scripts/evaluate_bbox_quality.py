@@ -76,9 +76,9 @@ CAMERA_LABELS = {
 
 SYSTEM_PROMPT = """\
 You are an expert evaluator of 3-D bounding-box predictions for autonomous \
-driving. You will receive videos from multiple calibrated cameras mounted on \
-a vehicle. Each video already has bounding-box wireframes overlayed on it — \
-these are the predictions being evaluated.
+driving. You will receive videos from calibrated cameras mounted on a vehicle. \
+Each video already has bounding-box wireframes overlayed on it — these are \
+the predictions being evaluated.
 
 Your task is to judge how well the overlayed bounding boxes match the actual \
 vehicles visible in the scene.
@@ -93,16 +93,17 @@ score.
 on it at all, that is a MISSED DETECTION and SHOULD reduce the score.
 3. For vehicles that DO have bounding boxes, evaluate how well the box fits: \
 is it tightly aligned with the vehicle's shape, position, and orientation? \
-Loose, offset, or incorrectly sized boxes should reduce the score.
-
-Evaluate each camera view independently, then provide an overall assessment."""
+Loose, offset, or incorrectly sized boxes should reduce the score."""
 
 USER_PROMPT_TEMPLATE = """\
-The videos above show {num_cameras} camera views from an autonomous vehicle, \
-each with bounding-box wireframes overlayed. The cameras are, in order:
+You are given EXACTLY {num_cameras} videos — one per camera. The cameras are:
 {camera_list}
 
-For each camera view, please:
+There are NO other cameras. Your output must contain EXACTLY {num_cameras} \
+entries in "per_camera", one for each camera listed above, in the same order. \
+Do NOT invent additional cameras.
+
+For each of the {num_cameras} camera views:
 1. Count how many vehicles are clearly visible in the scene.
 2. Count how many of those visible vehicles have a bounding box on them.
 3. Assess the fit quality of each bounding box (tight/good, loose, offset, \
@@ -110,29 +111,28 @@ wrong size).
 4. Note any bounding boxes that appear where no vehicle is visible — remember, \
 these are expected and should NOT lower the score.
 
-After analyzing all views, output your evaluation as JSON with this structure:
+After analyzing all {num_cameras} views, output your evaluation as JSON:
 {{
   "per_camera": [
     {{
-      "camera": "<camera name>",
+      "camera": "<camera name from the list above>",
       "visible_vehicles": <int>,
       "vehicles_with_bbox": <int>,
       "missed_vehicles": <int>,
       "fit_quality": "good" | "acceptable" | "poor",
-      "notes": "<brief explanation>"
+      "notes": "<brief explanation, one sentence>"
     }}
   ],
   "overall_score": <float 0.0 to 1.0>,
-  "overall_notes": "<summary of strengths and weaknesses>"
+  "overall_notes": "<one-sentence summary>"
 }}
 
-The overall_score should be 0.0–1.0 where:
-- 1.0 = all visible vehicles are detected, boxes fit tightly
-- 0.7+ = most vehicles detected, boxes are reasonably accurate
-- 0.4–0.7 = significant missed detections or poor box fit
-- <0.4 = many missed vehicles or very poor box alignment
+Score guide: 1.0 = perfect, 0.7+ = good, 0.4–0.7 = significant issues, \
+<0.4 = poor.
 
-Output ONLY the JSON, no extra text."""
+CRITICAL: Output EXACTLY {num_cameras} per_camera entries, then \
+overall_score and overall_notes, then stop. No extra text, no markdown \
+fences."""
 
 
 def parse_args() -> argparse.Namespace:
@@ -214,6 +214,95 @@ def build_conversation(
     ]
 
 
+def clean_model_output(text: str) -> str:
+    """Strip markdown fences and leading/trailing whitespace."""
+    text = text.strip()
+    if text.startswith("```"):
+        first_newline = text.index("\n") if "\n" in text else len(text)
+        text = text[first_newline + 1 :]
+    if text.endswith("```"):
+        text = text[: -len("```")]
+    return text.strip()
+
+
+def try_parse_result(text: str, expected_cameras: int) -> dict | None:
+    """Parse JSON from model output, handling truncation and hallucinated cameras.
+
+    If the model produced more per_camera entries than expected, truncate to
+    the correct count and recompute an overall_score from the kept entries.
+    If the JSON is incomplete (truncated), attempt to salvage what we can.
+    """
+    try:
+        result = json.loads(text)
+    except json.JSONDecodeError:
+        result = _try_salvage_truncated(text)
+        if result is None:
+            return None
+
+    if "per_camera" in result:
+        result["per_camera"] = result["per_camera"][:expected_cameras]
+
+    if "overall_score" not in result and "per_camera" in result:
+        result["overall_score"] = _compute_score(result["per_camera"])
+        result["overall_notes"] = "(score computed from per-camera data)"
+
+    return result
+
+
+def _try_salvage_truncated(text: str) -> dict | None:
+    """Try to recover valid per_camera entries from truncated JSON."""
+    import re
+
+    match = re.search(r'"per_camera"\s*:\s*\[', text)
+    if not match:
+        return None
+
+    entries = []
+    entry_pattern = re.compile(
+        r'\{\s*"camera"\s*:.*?"notes"\s*:\s*"[^"]*"\s*\}', re.DOTALL
+    )
+    for m in entry_pattern.finditer(text, match.end()):
+        try:
+            entries.append(json.loads(m.group()))
+        except json.JSONDecodeError:
+            continue
+
+    if not entries:
+        return None
+
+    score_match = re.search(r'"overall_score"\s*:\s*([\d.]+)', text)
+    notes_match = re.search(r'"overall_notes"\s*:\s*"([^"]*)"', text)
+
+    result: dict = {"per_camera": entries}
+    if score_match:
+        result["overall_score"] = float(score_match.group(1))
+    if notes_match:
+        result["overall_notes"] = notes_match.group(1)
+    return result
+
+
+def _compute_score(per_camera: list[dict]) -> float:
+    """Derive an overall score from per-camera entries."""
+    total_visible = 0
+    total_with_bbox = 0
+    fit_scores = {"good": 1.0, "acceptable": 0.7, "poor": 0.3}
+
+    fit_sum = 0.0
+    fit_count = 0
+    for cam in per_camera:
+        v = cam.get("visible_vehicles", 0)
+        b = cam.get("vehicles_with_bbox", 0)
+        total_visible += v
+        total_with_bbox += b
+        fit = cam.get("fit_quality", "acceptable")
+        fit_sum += fit_scores.get(fit, 0.7)
+        fit_count += 1
+
+    detection_rate = total_with_bbox / max(total_visible, 1)
+    avg_fit = fit_sum / max(fit_count, 1)
+    return round(detection_rate * 0.6 + avg_fit * 0.4, 3)
+
+
 def main():
     args = parse_args()
     transformers.set_seed(0)
@@ -259,7 +348,11 @@ def main():
     inputs = inputs.to(model.device)
 
     print("Running inference …")
-    generated_ids = model.generate(**inputs, max_new_tokens=args.max_new_tokens)
+    generated_ids = model.generate(
+        **inputs,
+        max_new_tokens=args.max_new_tokens,
+        repetition_penalty=1.2,
+    )
     generated_ids_trimmed = [
         out_ids[len(in_ids) :]
         for in_ids, out_ids in zip(inputs.input_ids, generated_ids, strict=False)
@@ -270,17 +363,18 @@ def main():
         clean_up_tokenization_spaces=False,
     )[0]
 
+    output_text = clean_model_output(output_text)
+
     print("\n" + "=" * 60)
     print("EVALUATION RESULT")
     print("=" * 60)
-    print(output_text)
-    print("=" * 60)
 
-    # Attempt to parse and pretty-print the score
-    try:
-        result = json.loads(output_text)
-        score = result.get("overall_score", "N/A")
-        print(f"\nOverall Score: {score}")
+    result = try_parse_result(output_text, len(videos))
+    if result is not None:
+        formatted = json.dumps(result, indent=2)
+        print(formatted)
+        print("=" * 60)
+        print(f"\nOverall Score: {result.get('overall_score', 'N/A')}")
         if "per_camera" in result:
             print("\nPer-Camera Breakdown:")
             for cam_eval in result["per_camera"]:
@@ -299,7 +393,10 @@ def main():
         overall_notes = result.get("overall_notes")
         if overall_notes:
             print(f"\nSummary: {overall_notes}")
-    except (json.JSONDecodeError, TypeError):
+        output_text = formatted
+    else:
+        print(output_text)
+        print("=" * 60)
         print("\n(Could not parse structured JSON from model output)")
 
     if args.output:
