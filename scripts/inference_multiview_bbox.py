@@ -235,6 +235,7 @@ MAX_DEPTH_M = 120.0
 MIN_SIZE_M = 0.5
 MAX_SIZE_M = 15.0
 MAX_ABS_LATERAL_M = 60.0
+MAX_DETECTIONS_PER_FRAME = 15
 
 
 def filter_detections(detections: list[dict]) -> list[dict]:
@@ -273,6 +274,56 @@ def filter_detections(detections: list[dict]) -> list[dict]:
 
         kept.append(det)
     return kept
+
+
+def _det_center(det: dict) -> np.ndarray:
+    """Extract [x, y, z] from a detection's center field."""
+    c = det.get("center", [0, 0, 0])
+    if isinstance(c, dict):
+        return np.array([c.get("x", 0), c.get("y", 0), c.get("z", 0)])
+    if isinstance(c, (list, tuple)):
+        return np.array(c[:3], dtype=float)
+    return np.zeros(3)
+
+
+def remove_hallucinated_sequences(
+    detections: list[dict],
+    spacing_tol: float = 0.6,
+    min_run: int = 4,
+) -> list[dict]:
+    """Remove regularly-spaced phantom detections.
+
+    The model sometimes hallucinates a line of evenly-spaced "cars" along
+    a road.  This filter finds runs of >= *min_run* detections where
+    consecutive inter-detection distances vary by less than *spacing_tol*
+    metres and removes them.
+    """
+    if len(detections) < min_run:
+        return detections
+
+    centers = np.array([_det_center(d) for d in detections])
+    dists = np.linalg.norm(np.diff(centers, axis=0), axis=1)
+
+    to_remove: set[int] = set()
+    run_start = 0
+    for i in range(1, len(dists)):
+        if abs(dists[i] - dists[i - 1]) < spacing_tol:
+            continue
+        run_len = i - run_start + 1
+        if run_len >= min_run:
+            for j in range(run_start, i + 1):
+                to_remove.add(j)
+        run_start = i
+
+    run_len = len(dists) - run_start + 1
+    if run_len >= min_run:
+        for j in range(run_start, len(dists) + 1):
+            to_remove.add(j)
+
+    if to_remove:
+        kept = [d for i, d in enumerate(detections) if i not in to_remove]
+        return kept
+    return detections
 
 
 def detections_to_gt_format(
@@ -710,12 +761,23 @@ def run_inference(args: argparse.Namespace) -> None:
 
         detections = parse_json_response(response)
         detections = filter_detections(detections)
+        detections = remove_hallucinated_sequences(detections)
         ego_pose = ego_poses.get(timestamp_us) if ego_poses else None
         frame_results = detections_to_gt_format(
             detections, timestamp_us, ego_pose, calibration,
         )
+
+        boxes = [r["obstacle"] for r in frame_results]
+        boxes = center_distance_nms(boxes, dist_threshold=args.nms_dist)
+        if len(boxes) > MAX_DETECTIONS_PER_FRAME:
+            boxes = boxes[:MAX_DETECTIONS_PER_FRAME]
+        frame_results = [
+            {"obstacle": b, "key": {"timestamp_micros": timestamp_us}}
+            for b in boxes
+        ]
+
         all_predictions.extend(frame_results)
-        print(f"  Detected {len(detections)} objects")
+        print(f"  Detected {len(detections)} raw → {len(frame_results)} after filtering")
 
     output = {
         "metadata": {
