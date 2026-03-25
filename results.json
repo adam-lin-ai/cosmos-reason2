@@ -1,0 +1,62 @@
+{
+  "per_camera": [
+    {
+      "camera": "Front Wide",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Only ONE GT Car is present, which is accurately represented by its corresponding bbox."
+    },
+    {
+      "camera": "Front Telephoto",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "GT Cars occupy two lanes; however, both instances share identical bbox representations despite differing positions along the road."
+    },
+    {
+      "camera": "Cross Left",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "One GT Car appears correctly annotated within this segment."
+    },
+    {
+      "camera": "Cross Right",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "A single GT Car occupies space appropriately marked via bbox annotation across this section."
+    },
+    {
+      "camera": "Rear Center",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "The GT Car maintains consistent representation through bbox placement throughout this viewpoint."
+    },
+    {
+      "camera": "Rear Left",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "GT Cars retain accurate bbox assignments without deviations observed during observation periods."
+    },
+    {
+      "camera": "Rear Right",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Bounding boxes align perfectly with GT Car appearances captured under rear-right perspective."
+    }
+  ],
+  "overall_score": 1.0,
+  "overall_notes": "(score computed from per-camera data)"
+}
