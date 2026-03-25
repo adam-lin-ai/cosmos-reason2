@@ -284,14 +284,11 @@ def detections_to_gt_format(
     """Convert raw model detections into the ground-truth world-frame schema.
 
     The model outputs positions in a camera-centric frame (x=right, y=down,
-    z=forward).  When *ego_pose* is provided, positions are transformed:
+    z=forward) and a heading angle in degrees (0 = away from camera).
+    When *ego_pose* is provided, positions are transformed via
+    ``cam_to_world`` and heading is converted to a world-frame yaw:
 
-        camera → ego FLU (via per-camera extrinsics) → world (via ego pose)
-
-    If a detection includes ``image_id`` (1–7 matching CAMERA_ORDER), the
-    corresponding camera's extrinsics are used; otherwise FRONT_CENTER is
-    assumed.  Orientation quaternions are rotated into the world frame via
-    the sensor-to-rig and ego pose rotations.
+        world_yaw = ego_yaw + camera_mounting_yaw + heading
     """
     def _to_list(val, default, n=3):
         """Coerce a list, dict, or scalar into a fixed-length float list."""
@@ -319,39 +316,27 @@ def detections_to_gt_format(
     for det in detections:
         cam = _to_list(det.get("center", [0, 0, 0]), [0, 0, 0], 3)
         size = _to_list(det.get("size", [0, 0, 0]), [0, 0, 0], 3)
-        orientation = _to_list(det.get("orientation", [1, 0, 0, 0]), [1, 0, 0, 0], 4)
 
         cx, cy, cz = cam[0], cam[1], cam[2]
 
-        qw, qx, qy, qz = orientation[0], orientation[1], orientation[2], orientation[3]
-        qnorm = (qw**2 + qx**2 + qy**2 + qz**2) ** 0.5
-        if qnorm > 0 and abs(qnorm - 1.0) < QUAT_NORM_THRESHOLD:
-            qw, qx, qy, qz = qw / qnorm, qx / qnorm, qy / qnorm, qz / qnorm
-        else:
-            qw, qx, qy, qz = 1.0, 0.0, 0.0, 0.0
+        heading_deg = float(det.get("heading", 0))
 
         if ego_pose is not None:
             cam_ext = _get_cam_extrinsics(det)
             world = cam_to_world(cx, cy, cz, ego_pose, cam_ext)
             wx, wy, wz = float(world[0]), float(world[1]), float(world[2])
 
-            det_rot = Rotation.from_quat([qx, qy, qz, qw])
-            if cam_ext is not None:
-                # For orientations use only the camera mounting rotation (RPY),
-                # not the full sensor-to-rig transform.  R_s2r includes
-                # R_CAM2FLU which converts position axes (camera→FLU) but is
-                # already implicit in the model's quaternion convention where
-                # identity means "vehicle forward = camera-z".
-                rpy_rot = Rotation.from_euler(
-                    "xyz", cam_ext["rpy"], degrees=True,
-                )
-                world_rot = ego_pose["R"] * rpy_rot * det_rot
-            else:
-                world_rot = ego_pose["R"] * det_rot
+            ego_yaw_deg = ego_pose["R"].as_euler("ZYX", degrees=True)[0]
+            cam_yaw_deg = cam_ext["rpy"][2] if cam_ext is not None else 0.0
+            world_yaw_deg = ego_yaw_deg + cam_yaw_deg + heading_deg
+            world_rot = Rotation.from_euler("z", world_yaw_deg, degrees=True)
             wq = world_rot.as_quat()  # scipy convention: [x, y, z, w]
-            qx, qy, qz, qw = float(wq[0]), float(wq[1]), float(wq[2]), float(wq[3])
+            qw, qx, qy, qz = float(wq[3]), float(wq[0]), float(wq[1]), float(wq[2])
         else:
             wx, wy, wz = cx, cy, cz
+            yaw_rot = Rotation.from_euler("z", heading_deg, degrees=True)
+            wq = yaw_rot.as_quat()
+            qw, qx, qy, qz = float(wq[3]), float(wq[0]), float(wq[1]), float(wq[2])
 
         results.append({
             "obstacle": {

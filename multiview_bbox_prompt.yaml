@@ -21,6 +21,13 @@ system_prompt: |
   Each physical object must be reported ONCE.  Choose the camera where
   the object is largest / most clearly visible.
 
+  Heading is the direction the vehicle faces relative to the camera's
+  viewing direction, in degrees:
+      0 = driving away from the camera (same direction the camera looks)
+     90 = driving to the left in the image
+    -90 = driving to the right in the image
+    180 = driving toward the camera (oncoming)
+
 user_prompt: |
   Detect every vehicle and motorcycle visible in any of the camera views.
   Output a single JSON array — one entry per unique physical object:
@@ -29,12 +36,12 @@ user_prompt: |
       "category": "car" | "truck" | "motorcycle",
       "center": [x, y, z],
       "size":   [length, width, height],
-      "orientation": [w, x, y, z]
+      "heading": <degrees>
     }
   "image_id" is the camera number (1-7) where the object is best seen.
   "center" is the object's 3-D position in that camera's frame
   (x = right, y = down, z = depth).
   "size" is [length, width, height] in metres.
-  "orientation" is a unit quaternion in the same camera frame;
-  use [1,0,0,0] for a vehicle facing away from the camera.
+  "heading" is the vehicle's facing direction in degrees relative to
+  the camera (0 = away, 90 = left, -90 = right, 180 = oncoming).
   Output ONLY the JSON array, no extra text.
