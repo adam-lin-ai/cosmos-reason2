@@ -233,20 +233,23 @@ def try_parse_result(text: str, expected_cameras: int) -> dict | None:
     If the JSON is incomplete (truncated), attempt to salvage what we can.
     """
     try:
-        result = json.loads(text)
+        parsed = json.loads(text)
     except json.JSONDecodeError:
-        result = _try_salvage_truncated(text)
-        if result is None:
+        parsed = _try_salvage_truncated(text)
+        if parsed is None:
             return None
 
-    if "per_camera" in result:
-        result["per_camera"] = result["per_camera"][:expected_cameras]
+    if isinstance(parsed, list):
+        parsed = {"per_camera": parsed}
 
-    if "overall_score" not in result and "per_camera" in result:
-        result["overall_score"] = _compute_score(result["per_camera"])
-        result["overall_notes"] = "(score computed from per-camera data)"
+    if "per_camera" in parsed:
+        parsed["per_camera"] = parsed["per_camera"][:expected_cameras]
 
-    return result
+    if "overall_score" not in parsed and "per_camera" in parsed:
+        parsed["overall_score"] = _compute_score(parsed["per_camera"])
+        parsed["overall_notes"] = "(score computed from per-camera data)"
+
+    return parsed
 
 
 def _try_salvage_truncated(text: str) -> dict | None:
