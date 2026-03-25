@@ -213,7 +213,7 @@ def build_single_camera_conversation(
     """Build conversation for evaluating a single camera view."""
     content: list[dict] = []
     for fp in frame_paths:
-        content.append({"type": "image", "image": f"file://{fp}"})
+        content.append({"type": "image", "image": str(fp)})
 
     content.append({
         "type": "text",
