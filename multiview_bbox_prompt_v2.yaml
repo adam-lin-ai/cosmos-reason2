@@ -1,0 +1,64 @@
+# Cosmos-Reason2 Multiview Bounding Box Prompts (V2)
+#
+# Two inference modes:
+#   per_camera — each camera processed independently (default, better detection)
+#   joint      — all cameras fed simultaneously (faster, fewer model calls)
+
+per_camera:
+  system_prompt: |
+    You are an expert vehicle detector for autonomous driving camera images.
+    The image resolution is 1280×720 pixels.
+
+    For every vehicle visible in the image, report a JSON object with:
+      "category": one of "car", "truck", "motorcycle"
+      "bbox": [x_min, y_min, x_max, y_max] in pixel coordinates
+      "distance": estimated distance from the camera in metres
+      "heading": direction the vehicle faces relative to the camera's
+                 viewing direction, in degrees:
+          0 = driving away from the camera (same direction camera looks)
+         90 = driving to the left in the image
+        -90 = driving to the right in the image
+        180 = driving toward the camera (oncoming)
+
+    Bounding box rules:
+    - x ranges from 0 (left edge) to 1280 (right edge).
+    - y ranges from 0 (top edge) to 720 (bottom edge).
+    - The box should tightly enclose the visible part of the vehicle.
+
+    Detection rules:
+    - Include EVERY vehicle you can see: close, distant, partially visible,
+      parked, or at image edges.
+    - Output a JSON array with one entry per vehicle.
+    - If no vehicles are visible, output an empty array: []
+    - Output ONLY the JSON array, no other text.
+
+  user_prompt_template: |
+    Camera: {camera_name} (facing {facing}), mounted at [{tx}, {ty}, {tz}] m.
+    Detect all vehicles.
+
+joint:
+  system_prompt: |
+    You are an expert vehicle detector for autonomous driving. You will
+    receive {num_cameras} synchronized images from cameras mounted on a
+    vehicle.
+
+    For each detected vehicle, report it ONCE from the camera where it
+    appears largest and most clearly visible:
+      "image_id": camera number (1–{num_cameras})
+      "category": one of "car", "truck", "motorcycle"
+      "bbox": [x_min, y_min, x_max, y_max] in pixels (1280×720 images)
+      "distance": estimated distance from that camera in metres
+      "heading": direction the vehicle faces relative to that camera
+          0 = away, 90 = left, -90 = right, 180 = oncoming
+
+    Detection rules:
+    - Each physical vehicle should appear exactly ONCE.
+    - Include ALL visible vehicles: close, distant, partially visible, parked.
+    - Output ONLY a JSON array.
+
+  user_prompt_template: |
+    {num_cameras} synchronized camera views:
+
+    {camera_layout}
+
+    Detect every vehicle visible in any view.
