@@ -29,11 +29,11 @@
 
 """Evaluate bounding-box overlay quality on multiview videos using Cosmos-Reason2.
 
-Feeds overlayed multiview camera videos to Cosmos-Reason2 and asks the model to
-assess how well the drawn bounding boxes fit the vehicles in the scene. The model
-produces per-camera assessments and an overall quality score.
+Each camera view is evaluated independently: keyframes are extracted from the
+overlay video and sent as images so the model can inspect bounding-box wireframes
+at full resolution. Results are aggregated into an overall score.
 
-Scoring rules communicated to the model:
+Scoring rules:
   - Bounding boxes on vehicles not visible in a view are expected (ground truth
     may include occluded / out-of-frame objects) and should NOT lower the score.
   - Visible vehicles that have NO bounding box at all (missed detections) SHOULD
@@ -42,11 +42,13 @@ Scoring rules communicated to the model:
 
 import argparse
 import json
+import tempfile
 import warnings
 from pathlib import Path
 
 warnings.filterwarnings("ignore")
 
+import av
 import torch
 import transformers
 
@@ -75,64 +77,47 @@ CAMERA_LABELS = {
 }
 
 SYSTEM_PROMPT = """\
-You are an expert evaluator of 3-D bounding-box predictions for autonomous \
-driving. You will receive videos from calibrated cameras mounted on a vehicle. \
-Each video already has bounding-box wireframes overlayed on it — these are \
-the predictions being evaluated.
+You are an expert evaluator of 3-D bounding-box overlays for autonomous driving.
 
-Your task is to judge how well the overlayed bounding boxes match the actual \
-vehicles visible in the scene.
+You will be shown frames from a single camera on a vehicle. Each frame has \
+coloured 3-D bounding-box wireframes drawn on top of the image. The wireframes \
+are lines forming rectangular boxes projected onto the image — they may appear \
+as coloured (red or green) rectangular outlines around vehicles.
 
-IMPORTANT SCORING RULES — read carefully:
-1. Some bounding boxes may appear in locations where NO vehicle is visible in \
-that particular camera view. This is EXPECTED and NORMAL — the ground-truth \
-annotations include vehicles that may be occluded, out of frame, or only \
-visible from other camera angles. These "extra" boxes must NOT reduce the \
-score.
-2. If a vehicle is clearly visible in a camera view but has NO bounding box \
-on it at all, that is a MISSED DETECTION and SHOULD reduce the score.
-3. For vehicles that DO have bounding boxes, evaluate how well the box fits: \
-is it tightly aligned with the vehicle's shape, position, and orientation? \
-Loose, offset, or incorrectly sized boxes should reduce the score."""
+Your job is to carefully judge overlay quality.
 
-USER_PROMPT_TEMPLATE = """\
-You are given EXACTLY {num_cameras} videos — one per camera. The cameras are:
-{camera_list}
+SCORING RULES:
+1. Wireframe boxes that appear where NO vehicle is visible are EXPECTED. The \
+ground-truth labels include vehicles that may be occluded or out of frame. \
+These extra boxes must NOT lower the score.
+2. If a vehicle (car, truck, motorcycle) is clearly visible but has NO \
+wireframe box on it, that is a MISSED DETECTION — this SHOULD lower the score.
+3. For boxes that DO overlap a vehicle, judge the FIT: does the wireframe \
+tightly enclose the vehicle, or is it too large, offset, or wrong shape? \
+Poor fit should lower the score."""
 
-There are NO other cameras. Your output must contain EXACTLY {num_cameras} \
-entries in "per_camera", one for each camera listed above, in the same order. \
-Do NOT invent additional cameras.
+PER_CAMERA_PROMPT = """\
+These images are frames from the "{camera_label}" camera with bounding-box \
+wireframes overlayed. Look carefully at every frame.
 
-For each of the {num_cameras} camera views:
-1. Count how many vehicles are clearly visible in the scene.
-2. Count how many of those visible vehicles have a bounding box on them.
-3. Assess the fit quality of each bounding box (tight/good, loose, offset, \
-wrong size).
-4. Note any bounding boxes that appear where no vehicle is visible — remember, \
-these are expected and should NOT lower the score.
+Analyse:
+1. How many distinct vehicles (cars, trucks, motorcycles) are clearly visible?
+2. How many of those vehicles have a wireframe bounding box on them?
+3. Are there any visible vehicles with NO box at all (missed detections)?
+4. For vehicles that do have boxes, how well does the wireframe fit — is it \
+tight around the vehicle, or too large / offset / wrong shape?
+5. Ignore any wireframe boxes where no vehicle is visible — those are expected.
 
-After analyzing all {num_cameras} views, output your evaluation as JSON:
+Respond with ONLY this JSON (no markdown fences, no extra text):
 {{
-  "per_camera": [
-    {{
-      "camera": "<camera name from the list above>",
-      "visible_vehicles": <int>,
-      "vehicles_with_bbox": <int>,
-      "missed_vehicles": <int>,
-      "fit_quality": "good" | "acceptable" | "poor",
-      "notes": "<brief explanation, one sentence>"
-    }}
-  ],
-  "overall_score": <float 0.0 to 1.0>,
-  "overall_notes": "<one-sentence summary>"
-}}
-
-Score guide: 1.0 = perfect, 0.7+ = good, 0.4–0.7 = significant issues, \
-<0.4 = poor.
-
-CRITICAL: Output EXACTLY {num_cameras} per_camera entries, then \
-overall_score and overall_notes, then stop. No extra text, no markdown \
-fences."""
+  "camera": "{camera_label}",
+  "visible_vehicles": <int>,
+  "vehicles_with_bbox": <int>,
+  "missed_vehicles": <int>,
+  "fit_quality": "good" | "acceptable" | "poor",
+  "fit_details": "<describe specific fit issues if any, or say tight/accurate>",
+  "notes": "<one sentence summary>"
+}}"""
 
 
 def parse_args() -> argparse.Namespace:
@@ -154,7 +139,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--max-new-tokens",
         type=int,
-        default=4096,
+        default=1024,
     )
     p.add_argument(
         "--min-vision-tokens",
@@ -165,6 +150,12 @@ def parse_args() -> argparse.Namespace:
         "--max-vision-tokens",
         type=int,
         default=8192,
+    )
+    p.add_argument(
+        "--num-frames",
+        type=int,
+        default=6,
+        help="Number of keyframes to extract per video",
     )
     p.add_argument(
         "--output",
@@ -185,22 +176,49 @@ def discover_videos(scene_dir: Path) -> list[tuple[str, Path]]:
     return found
 
 
-def build_conversation(
-    videos: list[tuple[str, Path]],
-) -> list[dict]:
-    """Build the chat conversation with all video inputs and the evaluation prompt."""
-    video_content: list[dict] = []
-    for _cam_name, video_path in videos:
-        video_content.append({"type": "video", "video": str(video_path)})
+def extract_keyframes(video_path: Path, num_frames: int) -> list[Path]:
+    """Extract evenly-spaced frames from a video, save as temp PNGs."""
+    frames = []
+    with av.open(str(video_path)) as container:
+        stream = container.streams.video[0]
+        total = stream.frames or 0
+        if total == 0:
+            for _ in container.decode(video=0):
+                total += 1
+            container.seek(0)
 
-    camera_list = "\n".join(
-        f"  {i + 1}. {CAMERA_LABELS[cam]}" for i, (cam, _) in enumerate(videos)
-    )
-    user_prompt = USER_PROMPT_TEMPLATE.format(
-        num_cameras=len(videos),
-        camera_list=camera_list,
-    )
-    video_content.append({"type": "text", "text": user_prompt})
+        step = max(total // (num_frames + 1), 1)
+        target_indices = [step * (i + 1) for i in range(num_frames)]
+
+        idx = 0
+        for frame in container.decode(video=0):
+            if idx in target_indices:
+                frames.append(frame.to_image())
+            if len(frames) >= num_frames:
+                break
+            idx += 1
+
+    paths = []
+    for i, img in enumerate(frames):
+        p = Path(tempfile.mktemp(suffix=f"_frame{i}.png"))
+        img.save(p)
+        paths.append(p)
+    return paths
+
+
+def build_single_camera_conversation(
+    camera_label: str,
+    frame_paths: list[Path],
+) -> list[dict]:
+    """Build conversation for evaluating a single camera view."""
+    content: list[dict] = []
+    for fp in frame_paths:
+        content.append({"type": "image", "image": f"file://{fp}"})
+
+    content.append({
+        "type": "text",
+        "text": PER_CAMERA_PROMPT.format(camera_label=camera_label),
+    })
 
     return [
         {
@@ -209,7 +227,7 @@ def build_conversation(
         },
         {
             "role": "user",
-            "content": video_content,
+            "content": content,
         },
     ]
 
@@ -225,70 +243,30 @@ def clean_model_output(text: str) -> str:
     return text.strip()
 
 
-def try_parse_result(text: str, expected_cameras: int) -> dict | None:
-    """Parse JSON from model output, handling truncation and hallucinated cameras.
-
-    If the model produced more per_camera entries than expected, truncate to
-    the correct count and recompute an overall_score from the kept entries.
-    If the JSON is incomplete (truncated), attempt to salvage what we can.
-    """
+def try_parse_camera_result(text: str) -> dict | None:
+    """Parse a single camera evaluation JSON from model output."""
     try:
         parsed = json.loads(text)
+        if isinstance(parsed, dict):
+            return parsed
     except json.JSONDecodeError:
-        parsed = _try_salvage_truncated(text)
-        if parsed is None:
-            return None
+        pass
 
-    if isinstance(parsed, list):
-        parsed = {"per_camera": parsed}
-
-    if "per_camera" in parsed:
-        parsed["per_camera"] = parsed["per_camera"][:expected_cameras]
-
-    if "overall_score" not in parsed and "per_camera" in parsed:
-        parsed["overall_score"] = _compute_score(parsed["per_camera"])
-        parsed["overall_notes"] = "(score computed from per-camera data)"
-
-    return parsed
-
-
-def _try_salvage_truncated(text: str) -> dict | None:
-    """Try to recover valid per_camera entries from truncated JSON."""
     import re
-
-    match = re.search(r'"per_camera"\s*:\s*\[', text)
-    if not match:
-        return None
-
-    entries = []
-    entry_pattern = re.compile(
-        r'\{\s*"camera"\s*:.*?"notes"\s*:\s*"[^"]*"\s*\}', re.DOTALL
-    )
-    for m in entry_pattern.finditer(text, match.end()):
+    match = re.search(r'\{[^{}]*"camera"[^{}]*\}', text, re.DOTALL)
+    if match:
         try:
-            entries.append(json.loads(m.group()))
+            return json.loads(match.group())
         except json.JSONDecodeError:
-            continue
-
-    if not entries:
-        return None
-
-    score_match = re.search(r'"overall_score"\s*:\s*([\d.]+)', text)
-    notes_match = re.search(r'"overall_notes"\s*:\s*"([^"]*)"', text)
-
-    result: dict = {"per_camera": entries}
-    if score_match:
-        result["overall_score"] = float(score_match.group(1))
-    if notes_match:
-        result["overall_notes"] = notes_match.group(1)
-    return result
+            pass
+    return None
 
 
-def _compute_score(per_camera: list[dict]) -> float:
+def compute_overall_score(per_camera: list[dict]) -> float:
     """Derive an overall score from per-camera entries."""
     total_visible = 0
     total_with_bbox = 0
-    fit_scores = {"good": 1.0, "acceptable": 0.7, "poor": 0.3}
+    fit_weights = {"good": 1.0, "acceptable": 0.7, "poor": 0.3}
 
     fit_sum = 0.0
     fit_count = 0
@@ -298,12 +276,39 @@ def _compute_score(per_camera: list[dict]) -> float:
         total_visible += v
         total_with_bbox += b
         fit = cam.get("fit_quality", "acceptable")
-        fit_sum += fit_scores.get(fit, 0.7)
+        fit_sum += fit_weights.get(fit, 0.7)
         fit_count += 1
 
     detection_rate = total_with_bbox / max(total_visible, 1)
     avg_fit = fit_sum / max(fit_count, 1)
     return round(detection_rate * 0.6 + avg_fit * 0.4, 3)
+
+
+def run_inference(model, processor, conversation, max_new_tokens: int) -> str:
+    """Run a single inference pass and return decoded text."""
+    inputs = processor.apply_chat_template(
+        conversation,
+        tokenize=True,
+        add_generation_prompt=True,
+        return_dict=True,
+        return_tensors="pt",
+    )
+    inputs = inputs.to(model.device)
+
+    generated_ids = model.generate(
+        **inputs,
+        max_new_tokens=max_new_tokens,
+        repetition_penalty=1.2,
+    )
+    generated_ids_trimmed = [
+        out_ids[len(in_ids) :]
+        for in_ids, out_ids in zip(inputs.input_ids, generated_ids, strict=False)
+    ]
+    return processor.batch_decode(
+        generated_ids_trimmed,
+        skip_special_tokens=True,
+        clean_up_tokenization_spaces=False,
+    )[0]
 
 
 def main():
@@ -332,81 +337,92 @@ def main():
         "shortest_edge": args.min_vision_tokens * PIXELS_PER_TOKEN,
         "longest_edge": args.max_vision_tokens * PIXELS_PER_TOKEN,
     }
-    processor.video_processor.size = {
-        "shortest_edge": args.min_vision_tokens * PIXELS_PER_TOKEN,
-        "longest_edge": args.max_vision_tokens * PIXELS_PER_TOKEN,
+
+    per_camera_results = []
+    temp_files = []
+
+    for cam_name, video_path in videos:
+        label = CAMERA_LABELS[cam_name]
+        print(f"\nEvaluating: {label} …")
+
+        print(f"  Extracting {args.num_frames} keyframes …")
+        frame_paths = extract_keyframes(video_path, args.num_frames)
+        temp_files.extend(frame_paths)
+        print(f"  Extracted {len(frame_paths)} frames")
+
+        conversation = build_single_camera_conversation(label, frame_paths)
+
+        print("  Running inference …")
+        raw_output = run_inference(model, processor, conversation, args.max_new_tokens)
+        cleaned = clean_model_output(raw_output)
+
+        cam_result = try_parse_camera_result(cleaned)
+        if cam_result is not None:
+            cam_result["camera"] = label
+            per_camera_results.append(cam_result)
+            v = cam_result.get("visible_vehicles", "?")
+            b = cam_result.get("vehicles_with_bbox", "?")
+            m = cam_result.get("missed_vehicles", "?")
+            fit = cam_result.get("fit_quality", "?")
+            print(f"  visible={v}  with_bbox={b}  missed={m}  fit={fit}")
+            notes = cam_result.get("notes", "")
+            if notes:
+                print(f"  {notes}")
+        else:
+            print(f"  WARNING: Could not parse output for {label}")
+            print(f"  Raw: {cleaned[:200]}")
+            per_camera_results.append({
+                "camera": label,
+                "visible_vehicles": -1,
+                "vehicles_with_bbox": -1,
+                "missed_vehicles": -1,
+                "fit_quality": "unknown",
+                "notes": f"Parse failure. Raw: {cleaned[:300]}",
+            })
+
+    for f in temp_files:
+        f.unlink(missing_ok=True)
+
+    overall_score = compute_overall_score(
+        [c for c in per_camera_results if c.get("visible_vehicles", -1) >= 0]
+    )
+
+    result = {
+        "per_camera": per_camera_results,
+        "overall_score": overall_score,
+        "overall_notes": _build_summary(per_camera_results, overall_score),
     }
 
-    conversation = build_conversation(videos)
-
-    print("Processing inputs …")
-    inputs = processor.apply_chat_template(
-        conversation,
-        tokenize=True,
-        add_generation_prompt=True,
-        return_dict=True,
-        return_tensors="pt",
-        fps=4,
-    )
-    inputs = inputs.to(model.device)
-
-    print("Running inference …")
-    generated_ids = model.generate(
-        **inputs,
-        max_new_tokens=args.max_new_tokens,
-        repetition_penalty=1.2,
-    )
-    generated_ids_trimmed = [
-        out_ids[len(in_ids) :]
-        for in_ids, out_ids in zip(inputs.input_ids, generated_ids, strict=False)
-    ]
-    output_text = processor.batch_decode(
-        generated_ids_trimmed,
-        skip_special_tokens=True,
-        clean_up_tokenization_spaces=False,
-    )[0]
-
-    output_text = clean_model_output(output_text)
+    formatted = json.dumps(result, indent=2)
 
     print("\n" + "=" * 60)
-    print("EVALUATION RESULT")
+    print("FINAL RESULTS")
     print("=" * 60)
-
-    result = try_parse_result(output_text, len(videos))
-    if result is not None:
-        formatted = json.dumps(result, indent=2)
-        print(formatted)
-        print("=" * 60)
-        print(f"\nOverall Score: {result.get('overall_score', 'N/A')}")
-        if "per_camera" in result:
-            print("\nPer-Camera Breakdown:")
-            for cam_eval in result["per_camera"]:
-                cam_name = cam_eval.get("camera", "?")
-                visible = cam_eval.get("visible_vehicles", "?")
-                with_bbox = cam_eval.get("vehicles_with_bbox", "?")
-                missed = cam_eval.get("missed_vehicles", "?")
-                fit = cam_eval.get("fit_quality", "?")
-                print(
-                    f"  {cam_name:20s}  visible={visible}  "
-                    f"with_bbox={with_bbox}  missed={missed}  fit={fit}"
-                )
-                notes = cam_eval.get("notes")
-                if notes:
-                    print(f"    {notes}")
-        overall_notes = result.get("overall_notes")
-        if overall_notes:
-            print(f"\nSummary: {overall_notes}")
-        output_text = formatted
-    else:
-        print(output_text)
-        print("=" * 60)
-        print("\n(Could not parse structured JSON from model output)")
+    print(formatted)
+    print("=" * 60)
+    print(f"\nOverall Score: {overall_score}")
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         with open(args.output, "w") as f:
-            f.write(output_text)
+            f.write(formatted)
         print(f"\nResults written to {args.output}")
+
+
+def _build_summary(per_camera: list[dict], score: float) -> str:
+    valid = [c for c in per_camera if c.get("visible_vehicles", -1) >= 0]
+    total_visible = sum(c.get("visible_vehicles", 0) for c in valid)
+    total_missed = sum(c.get("missed_vehicles", 0) for c in valid)
+    fit_counts: dict[str, int] = {}
+    for c in valid:
+        f = c.get("fit_quality", "unknown")
+        fit_counts[f] = fit_counts.get(f, 0) + 1
+    fit_str = ", ".join(f"{k}: {v}" for k, v in sorted(fit_counts.items()))
+    return (
+        f"Score {score:.2f} across {len(valid)} cameras. "
+        f"{total_visible} vehicles visible, {total_missed} missed. "
+        f"Fit quality — {fit_str}."
+    )
 
 
 if __name__ == "__main__":
