@@ -1,0 +1,401 @@
+```json
+{
+  "per_camera": [
+    {
+      "camera": "Front Wide",
+      "visible_vehicles": 9,
+      "vehicles_with_bbox": 9,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "All nine visible vehicles are correctly detected with tight bounding boxes. The front wide view captures a bustling urban street with multiple cars in motion and stationary, all accurately represented in the annotations."
+    },
+    {
+      "camera": "Front Telephoto",
+      "visible_vehicles": 7,
+      "vehicles_with_bbox": 7,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Seven vehicles are clearly visible in this telephoto front view. The annotations accurately represent the positions and sizes of these vehicles, maintaining consistent alignment and spacing."
+    },
+    {
+      "camera": "Cross Left",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are present in the cross-left view. The bounding boxes accurately capture their positions, showing no significant deviations or overlaps."
+    },
+    {
+      "camera": "Cross Right",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the cross-right view. The annotations correctly identify and enclose these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Rear Center",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the rear-center view. The bounding boxes are appropriately sized and positioned, reflecting the vehicles accurately."
+    },
+    {
+      "camera": "Rear Left",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "One vehicle is visible in the rear-left view. The annotation correctly identifies and encloses this vehicle, with no significant deviations."
+    },
+    {
+      "camera": "Rear Right",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "One vehicle is captured in the rear-right view. The annotation accurately represents this vehicle, with no noticeable errors in positioning or sizing."
+    },
+    {
+      "camera": "Side View Wide",
+      "visible_vehicles": 6,
+      "vehicles_with_bbox": 6,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Six vehicles are visible in the side-wide view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Side View Telephoto",
+      "visible_vehicles": 4,
+      "vehicles_with_bbox": 4,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Four vehicles are captured in the telephoto side view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Rear Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the rear-wide view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Left Side",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "One vehicle is captured in the left-side view. The annotation accurately represents this vehicle, with no noticeable errors in positioning or sizing."
+    },
+    {
+      "camera": "Right Side",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the right-side view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "One vehicle is captured in the wide low-angle view. The annotation accurately represents this vehicle, with no noticeable errors in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 1,
+      "vehicles_with_bbox": 1,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "One vehicle is visible in the telephoto low-angle view. The annotation correctly identifies and encloses this vehicle, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto neck view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Low Angle Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide low-angle view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Low Angle Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are visible in the telephoto low-angle view. The annotations correctly identify and enclose these vehicles, with no significant deviations or overlaps."
+    },
+    {
+      "camera": "Neck View Wide",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+      "fit_quality": "good",
+      "notes": "Two vehicles are captured in the wide neck view. The annotations accurately represent these vehicles, with no noticeable inaccuracies in positioning or sizing."
+    },
+    {
+      "camera": "Neck View Telephoto",
+      "visible_vehicles": 2,
+      "vehicles_with_bbox": 2,
+      "missed_vehicles": 0,
+     
