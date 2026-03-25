@@ -1,255 +1,285 @@
 {
-  "overall_mean_3d_iou": 0.0435,
+  "overall_mean_3d_iou": 0.0366,
   "total_gt": 1200,
-  "total_pred": 178,
-  "total_matched": 178,
+  "total_pred": 212,
+  "total_matched": 212,
   "per_timestamp": [
     {
       "timestamp_micros": 0,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.3392,
-        0.3602,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.1749
-    },
-    {
-      "timestamp_micros": 100000,
-      "num_pred": 5,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0202,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.004
-    },
-    {
-      "timestamp_micros": 200000,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.1619,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0405
-    },
-    {
-      "timestamp_micros": 300000,
-      "num_pred": 9,
-      "num_gt": 40,
-      "matched_ious": [
-        0.4098,
-        0.0,
-        0.0,
-        0.0,
-        0.0015,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0457
-    },
-    {
-      "timestamp_micros": 400000,
       "num_pred": 7,
       "num_gt": 40,
       "matched_ious": [
-        0.04,
-        0.0341,
         0.0,
-        0.1193,
+        0.1232,
+        0.0,
+        0.0,
+        0.0893,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0304
+    },
+    {
+      "timestamp_micros": 100000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.2408,
+        0.0948,
+        0.0165,
+        0.1796,
+        0.0
+      ],
+      "mean_iou": 0.0886
+    },
+    {
+      "timestamp_micros": 200000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1579,
+        0.0,
+        0.0,
+        0.0,
+        0.1354
+      ],
+      "mean_iou": 0.0489
+    },
+    {
+      "timestamp_micros": 300000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.1344,
+        0.2777,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0
       ],
-      "mean_iou": 0.0276
+      "mean_iou": 0.0589
+    },
+    {
+      "timestamp_micros": 400000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0734,
+        0.2901,
+        0.0,
+        0.0778,
+        0.0,
+        0.1302
+      ],
+      "mean_iou": 0.0952
     },
     {
       "timestamp_micros": 500000,
-      "num_pred": 4,
+      "num_pred": 5,
       "num_gt": 40,
       "matched_ious": [
-        0.4201,
-        0.2746,
-        0.0015,
-        0.0
+        0.0,
+        0.0,
+        0.1248,
+        0.0,
+        0.126
       ],
-      "mean_iou": 0.1741
+      "mean_iou": 0.0502
     },
     {
       "timestamp_micros": 600000,
       "num_pred": 7,
       "num_gt": 40,
       "matched_ious": [
-        0.0097,
         0.0,
-        0.0019,
+        0.1443,
         0.0,
+        0.0754,
         0.0,
         0.0,
         0.0
       ],
-      "mean_iou": 0.0016
+      "mean_iou": 0.0314
     },
     {
       "timestamp_micros": 700000,
       "num_pred": 6,
       "num_gt": 40,
       "matched_ious": [
-        0.3011,
-        0.0,
-        0.2042,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0842
-    },
-    {
-      "timestamp_micros": 800000,
-      "num_pred": 7,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0142,
-        0.3163,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0472
-    },
-    {
-      "timestamp_micros": 900000,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0307,
-        0.1424,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0433
-    },
-    {
-      "timestamp_micros": 1000000,
-      "num_pred": 6,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.3137,
-        0.0,
-        0.0029,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0528
-    },
-    {
-      "timestamp_micros": 1100000,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.1543,
-        0.0066,
-        0.0771
-      ],
-      "mean_iou": 0.0595
-    },
-    {
-      "timestamp_micros": 1200000,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.1267,
-        0.0661,
-        0.0688
-      ],
-      "mean_iou": 0.0654
-    },
-    {
-      "timestamp_micros": 1300000,
-      "num_pred": 8,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0002,
-        0.0,
-        0.2037,
-        0.0,
-        0.0,
-        0.0,
-        0.0049,
-        0.0
-      ],
-      "mean_iou": 0.0261
-    },
-    {
-      "timestamp_micros": 1400000,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.1254,
-        0.02,
-        0.0864
-      ],
-      "mean_iou": 0.058
-    },
-    {
-      "timestamp_micros": 1500000,
-      "num_pred": 5,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.0572,
-        0.0001,
-        0.0,
-        0.2005
-      ],
-      "mean_iou": 0.0516
-    },
-    {
-      "timestamp_micros": 1600000,
-      "num_pred": 5,
-      "num_gt": 40,
-      "matched_ious": [
         0.0,
         0.164,
         0.0,
-        0.0,
-        0.0531
-      ],
-      "mean_iou": 0.0434
-    },
-    {
-      "timestamp_micros": 1700000,
-      "num_pred": 10,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.1271,
-        0.0046,
-        0.0579,
-        0.0,
-        0.0,
-        0.0,
-        0.0005,
+        0.0086,
         0.0,
         0.0
       ],
-      "mean_iou": 0.019
+      "mean_iou": 0.0288
+    },
+    {
+      "timestamp_micros": 800000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.1074,
+        0.3297,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.1093
+    },
+    {
+      "timestamp_micros": 900000,
+      "num_pred": 8,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.0953,
+        0.1316,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0284
+    },
+    {
+      "timestamp_micros": 1000000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.0022,
+        0.1213,
+        0.0019,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0179
+    },
+    {
+      "timestamp_micros": 1100000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.352,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0503
+    },
+    {
+      "timestamp_micros": 1200000,
+      "num_pred": 8,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1769,
+        0.0603,
+        0.1221,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0449
+    },
+    {
+      "timestamp_micros": 1300000,
+      "num_pred": 7,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.0917,
+        0.023,
+        0.0,
+        0.0,
+        0.0894
+      ],
+      "mean_iou": 0.0292
+    },
+    {
+      "timestamp_micros": 1400000,
+      "num_pred": 21,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.1263,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.1933,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0152
+    },
+    {
+      "timestamp_micros": 1500000,
+      "num_pred": 11,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0112,
+        0.2461,
+        0.0,
+        0.0033,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0171
+      ],
+      "mean_iou": 0.0252
+    },
+    {
+      "timestamp_micros": 1600000,
+      "num_pred": 4,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.2094,
+        0.0613,
+        0.1765
+      ],
+      "mean_iou": 0.1118
+    },
+    {
+      "timestamp_micros": 1700000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0014,
+        0.1978,
+        0.1816,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0635
     },
     {
       "timestamp_micros": 1800000,
@@ -257,161 +287,165 @@
       "num_gt": 40,
       "matched_ious": [
         0.0,
-        0.1415,
+        0.0896,
         0.0,
-        0.0445,
         0.0,
-        0.1325
+        0.0,
+        0.0
       ],
-      "mean_iou": 0.0531
+      "mean_iou": 0.0149
     },
     {
       "timestamp_micros": 1900000,
+      "num_pred": 5,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0032,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0006
+    },
+    {
+      "timestamp_micros": 2000000,
       "num_pred": 0,
       "num_gt": 40,
       "matched_ious": [],
       "mean_iou": 0.0
     },
     {
-      "timestamp_micros": 2000000,
+      "timestamp_micros": 2100000,
       "num_pred": 6,
       "num_gt": 40,
       "matched_ious": [
-        0.2376,
         0.0,
-        0.1701,
+        0.1416,
+        0.0,
         0.0,
         0.0,
         0.0
       ],
-      "mean_iou": 0.068
+      "mean_iou": 0.0236
     },
     {
-      "timestamp_micros": 2100000,
+      "timestamp_micros": 2200000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1665,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0278
+    },
+    {
+      "timestamp_micros": 2300000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1358,
+        0.0556,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0319
+    },
+    {
+      "timestamp_micros": 2400000,
+      "num_pred": 6,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.1592,
+        0.0,
+        0.0,
+        0.0,
+        0.2233
+      ],
+      "mean_iou": 0.0637
+    },
+    {
+      "timestamp_micros": 2500000,
+      "num_pred": 8,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0,
+        0.0,
+        0.0,
+        0.1469,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_iou": 0.0184
+    },
+    {
+      "timestamp_micros": 2600000,
+      "num_pred": 5,
+      "num_gt": 40,
+      "matched_ious": [
+        0.0385,
+        0.0,
+        0.0,
+        0.0478,
+        0.0396
+      ],
+      "mean_iou": 0.0252
+    },
+    {
+      "timestamp_micros": 2700000,
       "num_pred": 9,
       "num_gt": 40,
       "matched_ious": [
         0.0,
         0.0,
-        0.0141,
+        0.0829,
         0.0,
         0.0,
-        0.0,
-        0.1449,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0177
-    },
-    {
-      "timestamp_micros": 2200000,
-      "num_pred": 18,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.001,
-        0.0934,
-        0.0023,
-        0.0,
-        0.0,
-        0.1334,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.3768,
-        0.0
-      ],
-      "mean_iou": 0.0337
-    },
-    {
-      "timestamp_micros": 2300000,
-      "num_pred": 7,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.0,
-        0.131,
-        0.0096,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0201
-    },
-    {
-      "timestamp_micros": 2400000,
-      "num_pred": 4,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.046,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0115
-    },
-    {
-      "timestamp_micros": 2500000,
-      "num_pred": 7,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.0,
-        0.1464,
         0.0,
         0.0,
         0.0,
         0.0
       ],
-      "mean_iou": 0.0209
-    },
-    {
-      "timestamp_micros": 2600000,
-      "num_pred": 6,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0677,
-        0.0797,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "mean_iou": 0.0246
-    },
-    {
-      "timestamp_micros": 2700000,
-      "num_pred": 7,
-      "num_gt": 40,
-      "matched_ious": [
-        0.0,
-        0.0,
-        0.0,
-        0.1638,
-        0.0383,
-        0.0,
-        0.0906
-      ],
-      "mean_iou": 0.0418
+      "mean_iou": 0.0092
     },
     {
       "timestamp_micros": 2800000,
-      "num_pred": 5,
+      "num_pred": 22,
       "num_gt": 40,
       "matched_ious": [
         0.0,
         0.0,
-        0.1601,
-        0.19,
+        0.4661,
+        0.0,
+        0.0,
+        0.1682,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
-      "mean_iou": 0.07
+      "mean_iou": 0.0288
     },
     {
       "timestamp_micros": 2900000,
